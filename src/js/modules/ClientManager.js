@@ -25,10 +25,17 @@ class ClientManager {
   async render() {
     try {
       await this.loadClients();
-      return this.generateHTML();
+      const container = document.getElementById('main-content');
+      if (container) {
+        container.innerHTML = this.generateHTML();
+        this.setupEventListeners();
+      }
     } catch (error) {
       console.error('Erreur lors du rendu des clients:', error);
-      return this.generateErrorHTML(error.message);
+      const container = document.getElementById('main-content');
+      if (container) {
+        container.innerHTML = this.generateErrorHTML(error.message);
+      }
     }
   }
 
