@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SamaFacture - Gestion de Facturation</title>
+    
+    <!-- Meta tags pour PWA -->
+    <meta name="description" content="SamaFacture - Système complet de gestion de facturation pour TPE sénégalaises">
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SamaFacture">
+    
+    <!-- Icônes -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="apple-touch-icon" href="assets/icon-192x192.png">
+    
+    <!-- Manifest PWA -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/clients.css">
+    <link rel="stylesheet" href="css/products.css">
+    <link rel="stylesheet" href="css/common-modules.css">
+    <link rel="stylesheet" href="css/settings.css">
+    <link rel="stylesheet" href="css/pwa.css">
+    
+    <!-- Service Worker -->
+    <script>
+        // Service Worker sera géré par PWAManager
+        console.log('🚀 SamaFacture PWA - Chargement en cours...');
+    </script>
+</head>
+<body>
+    <!-- Loader -->
+    <div id="app-loader" class="app-loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <i class="fas fa-file-invoice"></i>
+            </div>
+            <div class="loader-text">SamaFacture</div>
+            <div class="loader-spinner"></div>
+        </div>
+    </div>
+
+    <!-- Application principale -->
+    <div id="app" class="app-container" style="display: none;">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>SamaFacture</span>
+                </div>
+                <button id="sidebar-toggle" class="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" data-module="dashboard" class="nav-link active">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Tableau de Bord</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="#" data-module="clients" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>Clients</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="#" data-module="products" class="nav-link">
+                            <i class="fas fa-box"></i>
+                            <span>Produits</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="#" data-module="invoices" class="nav-link">
+                            <i class="fas fa-file-invoice"></i>
+                            <span>Factures</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="#" data-module="quotes" class="nav-link">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Devis</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="#" data-module="expenses" class="nav-link">
+                            <i class="fas fa-receipt"></i>
+                            <span>Dépenses</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-divider"></li>
+                    
+                    <li class="nav-item">
+                        <a href="#" data-module="settings" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Paramètres</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name">Utilisateur</div>
+                        <div class="user-role">Administrateur</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Contenu principal -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-left">
+                    <button id="mobile-menu-toggle" class="mobile-menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="breadcrumb">
+                        <span id="current-page">Tableau de Bord</span>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <button id="theme-toggle" class="theme-toggle" title="Changer de thème">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    
+                    <div class="header-actions">
+                        <button class="btn btn-primary btn-sm" onclick="app.loadModule('invoices')">
+                            <i class="fas fa-plus"></i>
+                            <span class="btn-text">Nouvelle Facture</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Zone de contenu -->
+            <div id="main-content" class="content-area">
+                <!-- Le contenu sera chargé dynamiquement ici -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Overlay pour les modales -->
+    <div id="modal-overlay" class="modal-overlay" style="display: none;">
+        <!-- Les modales seront chargées dynamiquement ici -->
+    </div>
+
+    <!-- Toast notifications -->
+    <div id="toast-container" class="toast-container">
+        <!-- Les notifications seront ajoutées dynamiquement ici -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/license/crypto.js"></script>
+    <script src="js/license/LicenseManager.js"></script>
+    <script src="js/database/DatabaseManager.js"></script>
+    <script src="js/pwa.js"></script>
+    <script src="js/modules/ClientManager.js"></script>
+    <script src="js/modules/ProductManager.js"></script>
+    <script src="js/modules/InvoiceManager.js"></script>
+    <script src="js/modules/QuoteManager.js"></script>
+    <script src="js/modules/ExpenseManager.js"></script>
+    <script src="js/modules/SettingsManager.js"></script>
+    <script src="js/app.js"></script>
+    
+    <!-- Script d'initialisation -->
+    <script>
+        // Masquer le loader une fois l'application chargée
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('app-loader').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+            }, 1000);
+        });
+        
+        // Gestion du menu mobile
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileToggle = document.getElementById('mobile-menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (mobileToggle && sidebar) {
+                mobileToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('mobile-open');
+                });
+            }
+            
+            // Fermer le menu mobile lors du clic sur un lien
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('mobile-open');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

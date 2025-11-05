@@ -1,0 +1,434 @@
+/**
+ * SamaFacture - Styles PWA
+ * Styles spécifiques aux fonctionnalités PWA
+ */
+
+/* ==========================================
+   INDICATEUR DE CONNECTIVITÉ
+   ========================================== */
+.connectivity-indicator {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    z-index: 10000;
+    animation: slideInRight 0.3s ease-out;
+    font-weight: 500;
+}
+
+.connectivity-indicator.online {
+    border-left: 4px solid var(--success-color);
+    color: var(--success-color);
+}
+
+.connectivity-indicator.offline {
+    border-left: 4px solid var(--danger-color);
+    color: var(--danger-color);
+}
+
+.connectivity-indicator i {
+    font-size: 1.25rem;
+}
+
+/* ==========================================
+   BOUTON D'INSTALLATION PWA
+   ========================================== */
+.install-button {
+    background: var(--gradient-primary);
+    color: var(--text-white);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 0.875rem;
+}
+
+.install-button:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.install-button i {
+    font-size: 1rem;
+}
+
+/* ==========================================
+   BANNIÈRE DE MISE À JOUR
+   ========================================== */
+.update-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: var(--gradient-primary);
+    color: var(--text-white);
+    z-index: 10001;
+    animation: slideInDown 0.3s ease-out;
+}
+
+.update-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.update-content i {
+    font-size: 1.25rem;
+}
+
+.update-content .btn {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: 0.875rem;
+    border-radius: var(--radius-sm);
+}
+
+.update-content .btn-primary {
+    background: var(--bg-white);
+    color: var(--primary-color);
+    border: none;
+}
+
+.update-content .btn-secondary {
+    background: transparent;
+    color: var(--text-white);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ==========================================
+   CONTENEUR DE TOASTS
+   ========================================== */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10002;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.toast {
+    background: var(--bg-white);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    min-width: 300px;
+    animation: slideInRight 0.3s ease-out;
+    font-weight: 500;
+}
+
+.toast.success {
+    border-left: 4px solid var(--success-color);
+    color: var(--success-color);
+}
+
+.toast.error {
+    border-left: 4px solid var(--danger-color);
+    color: var(--danger-color);
+}
+
+.toast.warning {
+    border-left: 4px solid var(--warning-color);
+    color: var(--warning-color);
+}
+
+.toast.info {
+    border-left: 4px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.toast i {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+/* ==========================================
+   STYLES POUR MODE STANDALONE (PWA INSTALLÉE)
+   ========================================== */
+@media (display-mode: standalone) {
+    body {
+        /* Ajustements pour l'app installée */
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+    }
+    
+    /* Masquer le bouton d'installation */
+    .install-button {
+        display: none !important;
+    }
+    
+    /* Ajuster le padding pour les barres de statut */
+    .header {
+        padding-top: env(safe-area-inset-top, 0);
+    }
+    
+    /* Indicateur d'app installée */
+    .header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        background: var(--success-color);
+        border-radius: 50%;
+    }
+}
+
+/* ==========================================
+   STYLES POUR DIFFÉRENTES ORIENTATIONS
+   ========================================== */
+@media (orientation: landscape) and (max-height: 500px) {
+    .connectivity-indicator,
+    .toast-container {
+        top: 10px;
+        right: 10px;
+    }
+    
+    .update-banner .update-content {
+        padding: var(--spacing-sm);
+    }
+}
+
+/* ==========================================
+   ANIMATIONS PWA
+   ========================================== */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================
+   RESPONSIVE PWA
+   ========================================== */
+@media (max-width: 768px) {
+    .connectivity-indicator,
+    .toast {
+        min-width: auto;
+        max-width: calc(100vw - 40px);
+    }
+    
+    .toast-container {
+        right: 10px;
+        left: 10px;
+    }
+    
+    .update-content {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        text-align: center;
+    }
+    
+    .update-content .btn {
+        min-width: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .connectivity-indicator {
+        top: 10px;
+        right: 10px;
+        padding: var(--spacing-sm);
+        font-size: 0.875rem;
+    }
+    
+    .toast {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: 0.875rem;
+    }
+    
+    .install-button {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.75rem;
+    }
+    
+    .install-button span {
+        display: none;
+    }
+}
+
+/* ==========================================
+   THÈME SOMBRE PWA
+   ========================================== */
+[data-theme="dark"] .connectivity-indicator,
+[data-theme="dark"] .toast {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .update-content .btn-primary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+/* ==========================================
+   ÉTATS DE CHARGEMENT PWA
+   ========================================== */
+.pwa-loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.pwa-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: var(--gradient-primary);
+    animation: loadingBar 2s infinite;
+}
+
+@keyframes loadingBar {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* ==========================================
+   INDICATEURS DE STATUT PWA
+   ========================================== */
+.pwa-status {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.pwa-status.online {
+    color: var(--success-color);
+}
+
+.pwa-status.offline {
+    color: var(--danger-color);
+}
+
+.pwa-status i {
+    font-size: 0.875rem;
+}
+
+/* ==========================================
+   BOUTONS D'ACTION PWA
+   ========================================== */
+.pwa-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.pwa-action-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 0.75rem;
+}
+
+.pwa-action-btn:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.pwa-action-btn i {
+    margin-right: var(--spacing-xs);
+}
+
+/* ==========================================
+   SPLASH SCREEN (pour PWA installée)
+   ========================================== */
+.pwa-splash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10003;
+    color: var(--text-white);
+}
+
+.pwa-splash-logo {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-lg);
+    animation: pulse 2s infinite;
+}
+
+.pwa-splash-text {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}
+
+.pwa-splash-subtitle {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}

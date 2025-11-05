@@ -2,21 +2,32 @@
   "name": "samafacture",
   "version": "1.0.0",
   "description": "Système complet de gestion de facturation pour les TPE sénégalaises",
-  "main": "electron/main.js",
+  "main": "main.js",
   "homepage": "./",
   "scripts": {
-    "dev": "concurrently \"npm run dev:web\" \"npm run dev:electron\"",
-    "dev:web": "webpack serve --mode development --config webpack.config.js",
-    "dev:electron": "wait-on http://localhost:3000 && electron .",
-    "build": "webpack --mode production && electron-builder",
-    "build:web": "webpack --mode production",
-    "build:electron": "electron-builder",
     "start": "electron .",
+    "dev": "concurrently \"npm run serve\" \"wait-on http://localhost:8000 && electron .\"",
+    "serve": "http-server src -p 8000 -c-1 --cors",
+    "build": "npm run build:web && npm run build:electron",
+    "build:web": "npm run optimize && npm run copy-dist",
+    "build:electron": "electron-builder",
+    "build:all": "electron-builder --win --mac --linux",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "optimize": "npm run minify:css && npm run minify:js",
+    "minify:css": "cleancss -o dist/css/bundle.min.css src/css/*.css",
+    "minify:js": "terser src/js/**/*.js -o dist/js/bundle.min.js --compress --mangle",
+    "copy-dist": "cpx \"src/**/*\" dist/",
+    "test": "echo \"Tests à implémenter\" && exit 0",
+    "lint": "eslint src/js/**/*.js",
+    "format": "prettier --write src/**/*.{js,css,html}",
+    "clean": "rimraf dist/ build/ node_modules/.cache/",
+    "postinstall": "electron-builder install-app-deps",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder",
-    "dist:win": "electron-builder --win",
-    "dist:mac": "electron-builder --mac",
-    "dist:linux": "electron-builder --linux"
+    "dist": "electron-builder --publish=never",
+    "release": "electron-builder --publish=always",
+    "icon:generate": "node src/icons/generate-icons.js"
   },
   "keywords": [
     "facturation",
@@ -29,59 +40,142 @@
   "author": "SamaFacture Team",
   "license": "MIT",
   "devDependencies": {
-    "concurrently": "^8.2.2",
     "electron": "^27.0.0",
     "electron-builder": "^24.6.4",
-    "wait-on": "^7.2.0",
-    "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1",
-    "html-webpack-plugin": "^5.5.3",
-    "css-loader": "^6.8.1",
-    "style-loader": "^3.3.3",
-    "file-loader": "^6.2.0",
-    "copy-webpack-plugin": "^11.0.0"
+    "concurrently": "^8.2.2",
+    "wait-on": "^7.0.1",
+    "http-server": "^14.1.1",
+    "clean-css-cli": "^5.6.2",
+    "terser": "^5.19.4",
+    "cpx": "^1.5.0",
+    "rimraf": "^5.0.5",
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.3"
   },
   "dependencies": {
-    "sql.js": "^1.8.0",
-    "chart.js": "^4.4.0",
-    "jspdf": "^2.5.1",
-    "jspdf-autotable": "^3.6.0",
-    "xlsx": "^0.18.5",
-    "crypto-js": "^4.2.0",
-    "uuid": "^9.0.1",
-    "date-fns": "^2.30.0"
+    "electron-updater": "^6.1.4",
+    "electron-log": "^4.4.8",
+    "electron-store": "^8.1.0"
   },
   "build": {
     "appId": "com.samafacture.app",
     "productName": "SamaFacture",
+    "copyright": "Copyright © 2024 SamaFacture Team",
     "directories": {
-      "output": "dist"
+      "output": "build",
+      "buildResources": "build-resources"
     },
     "files": [
-      "build/**/*",
-      "electron/**/*",
-      "node_modules/**/*",
-      "package.json"
+      "src/**/*",
+      "main.js",
+      "package.json",
+      "!src/icons/generate-icons.js",
+      "!**/*.md",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+      "!**/{appveyor.yml,.travis.yml,circle.yml}",
+      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
     ],
-    "mac": {
-      "category": "public.app-category.business",
-      "target": "dmg"
-    },
+    "extraResources": [
+      {
+        "from": "src/js/database/schema.sql",
+        "to": "schema.sql"
+      }
+    ],
     "win": {
-      "target": "nsis",
-      "icon": "assets/icon.ico"
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64", "ia32"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "build-resources/icon.ico",
+      "publisherName": "SamaFacture Team",
+      "verifyUpdateCodeSignature": false
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "icon": "build-resources/icon.icns",
+      "category": "public.app-category.business",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false
     },
     "linux": {
-      "target": "AppImage",
-      "category": "Office"
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        },
+        {
+          "target": "deb",
+          "arch": ["x64"]
+        },
+        {
+          "target": "rpm",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "build-resources/icon.png",
+      "category": "Office",
+      "desktop": {
+        "Name": "SamaFacture",
+        "Comment": "Gestion de facturation pour TPE",
+        "Keywords": "facturation;comptabilité;business;",
+        "StartupWMClass": "SamaFacture"
+      }
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+      "createStartMenuShortcut": true,
+      "shortcutName": "SamaFacture",
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "dmg": {
+      "title": "${productName} ${version}",
+      "artifactName": "${productName}-${version}.${ext}",
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "username",
+      "repo": "samafacture"
     }
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   }
 }
-

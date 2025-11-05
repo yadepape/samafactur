@@ -42,50 +42,77 @@ npm install
 
 ### Développement
 ```bash
-# Démarrer en mode développement (Web + Electron)
+# Option 1: Lancer avec Electron + serveur de développement
 npm run dev
+# ➜ Ouvre Electron avec DevTools + serveur HTTP sur http://localhost:8000
 
-# Démarrer uniquement la version web
-npm run dev:web
+# Option 2: Serveur web uniquement (pour tester PWA)
+npm run serve
+# ➜ Accès via http://localhost:8000
 
-# Démarrer uniquement Electron
-npm run dev:electron
+# Option 3: Application Electron uniquement
+npm start
+# ➜ Lance l'app Electron directement
 ```
 
 L'application sera accessible à :
-- **Web** : http://localhost:3000
+- **Web** : http://localhost:8000
 - **Electron** : Se lance automatiquement
 
 ### Build et Distribution
 
-#### Build Web
+#### Build Web (PWA)
 ```bash
-# Build pour production web
+# Build optimisé pour le web
 npm run build:web
+
+# Résultat dans dist/ :
+# ├── css/bundle.min.css    (CSS minifiée)
+# ├── js/bundle.min.js      (JS minifiée)
+# └── ...                   (tous les fichiers optimisés)
 ```
 
-#### Build Electron
+#### Build Desktop - Windows
 ```bash
-# Build complet (Web + Electron)
-npm run build
+# Build Windows (64-bit et 32-bit)
+npm run build:win
 
-# Créer un package sans installateur
-npm run pack
-
-# Créer des installateurs pour toutes les plateformes
-npm run dist
-
-# Créer un installateur Windows uniquement
-npm run dist:win
-
-# Créer un installateur macOS uniquement
-npm run dist:mac
-
-# Créer un installateur Linux uniquement
-npm run dist:linux
+# Génère dans build/ :
+# ├── SamaFacture-Setup-1.0.0.exe    (Installateur NSIS)
+# └── SamaFacture-1.0.0.exe          (Version portable)
 ```
 
-Les fichiers de distribution seront créés dans le dossier `dist/`.
+#### Build Desktop - macOS
+```bash
+# Build macOS (Intel + Apple Silicon)
+npm run build:mac
+
+# Génère dans build/ :
+# ├── SamaFacture-1.0.0.dmg    (Image disque)
+# └── SamaFacture-1.0.0.zip    (Archive)
+```
+
+#### Build Desktop - Linux
+```bash
+# Build Linux (multiple formats)
+npm run build:linux
+
+# Génère dans build/ :
+# ├── SamaFacture-1.0.0.AppImage           (Universel)
+# ├── samafacture_1.0.0_amd64.deb         (Debian/Ubuntu)
+# └── samafacture-1.0.0-1.x86_64.rpm      (Fedora/RedHat)
+```
+
+#### Build Multi-Plateforme
+```bash
+# Build pour toutes les plateformes
+npm run build:all
+
+# Build complet (Web + Desktop)
+npm run build
+```
+
+Les fichiers de distribution seront créés dans le dossier `build/`.
 
 ## 🔐 Système de Licence
 
@@ -248,4 +275,3 @@ MIT License - Voir le fichier LICENSE pour plus de détails.
 ---
 
 **SamaFacture** - Simplifions la facturation pour les TPE sénégalaises ! 🇸🇳
-

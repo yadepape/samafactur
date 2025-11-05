@@ -1,0 +1,363 @@
+/**
+ * SamaFacture - Styles pour le module Settings
+ * Styles spécifiques à la page des paramètres
+ */
+
+/* ==========================================
+   VARIABLES SPÉCIFIQUES AUX PARAMÈTRES
+   ========================================== */
+.settings-container {
+    --settings-primary: var(--primary-color);
+    --settings-secondary: var(--success-color);
+}
+
+/* ==========================================
+   LAYOUT PRINCIPAL SETTINGS
+   ========================================== */
+.settings-container {
+    max-width: 100%;
+    margin: 0 auto;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.settings-content {
+    margin-top: var(--spacing-xl);
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: var(--spacing-xl);
+}
+
+.settings-section {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================================
+   CARTES DE PARAMÈTRES
+   ========================================== */
+.settings-section .card {
+    height: 100%;
+    transition: all var(--transition-fast);
+}
+
+.settings-section .card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.settings-section .card-header {
+    background: var(--gradient-primary);
+    color: var(--text-white);
+    border-bottom: none;
+}
+
+.settings-section .card-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.settings-section .card-header i {
+    font-size: 1.5rem;
+}
+
+/* ==========================================
+   FORMULAIRES SETTINGS
+   ========================================== */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+}
+
+.form-check:hover {
+    background: var(--bg-tertiary);
+}
+
+.form-check-input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--settings-primary);
+}
+
+.form-check-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    margin: 0;
+}
+
+/* ==========================================
+   UPLOAD DE LOGO
+   ========================================== */
+.logo-upload-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.logo-preview {
+    width: 120px;
+    height: 120px;
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    background: var(--bg-secondary);
+    position: relative;
+    overflow: hidden;
+}
+
+.logo-preview:hover {
+    border-color: var(--settings-primary);
+    background: var(--bg-tertiary);
+    transform: scale(1.02);
+}
+
+.logo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+}
+
+.logo-preview i {
+    font-size: 2rem;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-sm);
+}
+
+.logo-preview span {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 0 var(--spacing-sm);
+}
+
+/* ==========================================
+   ACTIONS DE SAUVEGARDE
+   ========================================== */
+.backup-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.backup-actions .btn {
+    padding: var(--spacing-lg);
+    font-weight: 600;
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-normal);
+    text-align: center;
+    justify-content: center;
+    min-height: 60px;
+}
+
+.backup-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.backup-actions .btn i {
+    font-size: 1.25rem;
+    margin-bottom: var(--spacing-xs);
+    display: block;
+}
+
+/* ==========================================
+   STYLES SPÉCIAUX POUR DIFFÉRENTES SECTIONS
+   ========================================== */
+
+/* Section informations boutique */
+.settings-section:nth-child(1) .card-header {
+    background: var(--gradient-primary);
+}
+
+/* Section paramètres facturation */
+.settings-section:nth-child(2) .card-header {
+    background: var(--gradient-success);
+}
+
+/* Section préférences utilisateur */
+.settings-section:nth-child(3) .card-header {
+    background: var(--gradient-warning);
+}
+
+/* Section sauvegarde */
+.settings-section:nth-child(4) .card-header {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+/* ==========================================
+   RESPONSIVE SETTINGS
+   ========================================== */
+@media (max-width: 1200px) {
+    .settings-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+}
+
+@media (max-width: 768px) {
+    .settings-grid {
+        gap: var(--spacing-md);
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .backup-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .backup-actions .btn {
+        padding: var(--spacing-md);
+        min-height: 50px;
+    }
+    
+    .logo-preview {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .settings-section .card-header h3 {
+        font-size: 1.125rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-container {
+        padding: var(--spacing-sm);
+    }
+    
+    .settings-section .card-body {
+        padding: var(--spacing-md);
+    }
+    
+    .settings-section .card-header {
+        padding: var(--spacing-md);
+    }
+    
+    .logo-preview {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .logo-preview i {
+        font-size: 1.5rem;
+    }
+    
+    .logo-preview span {
+        font-size: 0.75rem;
+    }
+}
+
+/* ==========================================
+   ANIMATIONS SETTINGS
+   ========================================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.settings-section {
+    animation: slideInLeft 0.5s ease-out;
+}
+
+.settings-section:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.settings-section:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.settings-section:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.settings-section:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+/* ==========================================
+   ÉTATS SPÉCIAUX
+   ========================================== */
+.form-control:focus {
+    border-color: var(--settings-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #34d399 0%, var(--success-color) 100%);
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #fbbf24 0%, var(--warning-color) 100%);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #f87171 0%, var(--danger-color) 100%);
+}
+
+/* ==========================================
+   UTILITAIRES SETTINGS
+   ========================================== */
+.settings-container .text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.settings-container .card-hover {
+    transition: all var(--transition-normal);
+}
+
+.settings-container .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
