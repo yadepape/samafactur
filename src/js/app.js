@@ -469,11 +469,6 @@ class SamaFactureApp {
 
 // Variables globales
 let app;
-let clientManager;
-let productManager;
-let invoiceManager;
-let quoteManager;
-let expenseManager;
 
 // Fonction pour attendre que tous les scripts soient chargés
 function waitForScripts() {
@@ -523,34 +518,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Initialiser l'application de manière asynchrone
         await app.init();
         
-        // Exposer les gestionnaires globalement pour compatibilité
-        setTimeout(() => {
-            if (app.managers.clients) {
-                clientManager = app.managers.clients;
-                window.clientManager = app.managers.clients;
-            }
-            if (app.managers.products) {
-                productManager = app.managers.products;
-                window.productManager = app.managers.products;
-            }
-            if (app.managers.invoices) {
-                invoiceManager = app.managers.invoices;
-                window.invoiceManager = app.managers.invoices;
-            }
-            if (app.managers.quotes) {
-                quoteManager = app.managers.quotes;
-                window.quoteManager = app.managers.quotes;
-            }
-            if (app.managers.expenses) {
-                expenseManager = app.managers.expenses;
-                window.expenseManager = app.managers.expenses;
-            }
-            if (app.managers.settings) {
-                window.settingsManager = app.managers.settings;
-            }
-            
-            console.log('✅ Gestionnaires exposés globalement');
-        }, 500);
+        // Les gestionnaires sont maintenant exposés directement dans leurs fichiers respectifs
         
         console.log('✅ SamaFacture initialisé avec succès');
         
