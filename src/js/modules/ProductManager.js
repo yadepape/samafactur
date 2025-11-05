@@ -1423,3 +1423,8 @@ class ProductManager {
         }
     }
 }
+
+// Instanciation et exposition globale
+const productManager = new ProductManager();
+window.ProductManager = ProductManager;
+window.productManager = productManager;

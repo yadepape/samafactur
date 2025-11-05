@@ -626,3 +626,8 @@ class QuoteManager {
         }
     }
 }
+
+// Instanciation et exposition globale
+const quoteManager = new QuoteManager();
+window.QuoteManager = QuoteManager;
+window.quoteManager = quoteManager;

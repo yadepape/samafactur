@@ -531,3 +531,8 @@ class ExpenseManager {
         }
     }
 }
+
+// Instanciation et exposition globale
+const expenseManager = new ExpenseManager();
+window.ExpenseManager = ExpenseManager;
+window.expenseManager = expenseManager;

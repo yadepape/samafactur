@@ -548,5 +548,7 @@ class SettingsManager {
     }
 }
 
-// Initialiser le gestionnaire des paramètres
+// Instanciation et exposition globale
 const settingsManager = new SettingsManager();
+window.SettingsManager = SettingsManager;
+window.settingsManager = settingsManager;

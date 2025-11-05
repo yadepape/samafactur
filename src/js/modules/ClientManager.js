@@ -700,8 +700,5 @@ class ClientManager {
 const clientManager = new ClientManager();
 
 // Export global
-window.ClientManager = clientManager;
+window.ClientManager = ClientManager;
 window.clientManager = clientManager;
-
-export default clientManager;
-

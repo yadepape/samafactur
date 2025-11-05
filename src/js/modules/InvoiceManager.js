@@ -1002,3 +1002,8 @@ class InvoiceManager {
         }
     }
 }
+
+// Instanciation et exposition globale
+const invoiceManager = new InvoiceManager();
+window.InvoiceManager = InvoiceManager;
+window.invoiceManager = invoiceManager;
