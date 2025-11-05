@@ -8,8 +8,6 @@ class SamaFactureApp {
         this.currentModule = 'dashboard';
         this.managers = {};
         this.isInitialized = false;
-        
-        this.init();
     }
 
     /**
@@ -146,6 +144,8 @@ class SamaFactureApp {
     loadModule(moduleName) {
         try {
             console.log(`📄 Chargement du module: ${moduleName}`);
+            console.log('📋 État de l\'initialisation:', this.isInitialized);
+            console.log('🎯 Gestionnaires disponibles:', Object.keys(this.managers));
             
             // Mettre à jour la navigation active
             this.updateActiveNavigation(moduleName);
@@ -234,8 +234,13 @@ class SamaFactureApp {
      * Charger le tableau de bord
      */
     loadDashboard() {
+        console.log('📊 Chargement du dashboard...');
         const mainContent = document.getElementById('main-content');
-        if (!mainContent) return;
+        if (!mainContent) {
+            console.error('❌ Élément main-content introuvable !');
+            return;
+        }
+        console.log('✅ Élément main-content trouvé, chargement du contenu...');
         
         mainContent.innerHTML = `
             <div class="dashboard-container">
@@ -329,6 +334,8 @@ class SamaFactureApp {
                 </div>
             </div>
         `;
+        
+        console.log('✅ Dashboard chargé avec succès !');
     }
 
     /**
@@ -512,6 +519,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // Exposer l'application globalement
         window.app = app;
+        
+        // Initialiser l'application de manière asynchrone
+        await app.init();
         
         // Exposer les gestionnaires globalement pour compatibilité
         setTimeout(() => {
