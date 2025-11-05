@@ -188,13 +188,12 @@
     
     <!-- Script d'initialisation -->
     <script>
-        // Masquer le loader une fois l'application chargée
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('app-loader').style.display = 'none';
-                document.getElementById('app').style.display = 'flex';
-            }, 1000);
-        });
+        // Fonction pour masquer le loader une fois l'application initialisée
+        window.hideLoader = function() {
+            document.getElementById('app-loader').style.display = 'none';
+            document.getElementById('app').style.display = 'flex';
+            console.log('✅ Interface utilisateur affichée');
+        };
         
         // Gestion du menu mobile
         document.addEventListener('DOMContentLoaded', () => {

@@ -600,3 +600,7 @@ class DatabaseManager {
 
 // Initialiser le gestionnaire de base de données
 const databaseManager = new DatabaseManager();
+
+// Export global
+window.DatabaseManager = DatabaseManager;
+window.databaseManager = databaseManager;

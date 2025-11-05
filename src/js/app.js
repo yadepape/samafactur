@@ -43,34 +43,40 @@ class SamaFactureApp {
      */
     async initializeManagers() {
         try {
-            // Gestionnaire des clients (déjà existant)
-            if (typeof ClientManager !== 'undefined') {
-                this.managers.clients = new ClientManager();
-                console.log('✅ ClientManager initialisé');
+            // Utiliser les instances déjà créées dans les fichiers de gestionnaires
+            if (typeof window.clientManager !== 'undefined') {
+                this.managers.clients = window.clientManager;
+                console.log('✅ ClientManager initialisé (instance existante)');
             }
             
             // Gestionnaire des produits
-            if (typeof ProductManager !== 'undefined') {
-                this.managers.products = new ProductManager();
-                console.log('✅ ProductManager initialisé');
+            if (typeof window.productManager !== 'undefined') {
+                this.managers.products = window.productManager;
+                console.log('✅ ProductManager initialisé (instance existante)');
             }
             
             // Gestionnaire des factures
-            if (typeof InvoiceManager !== 'undefined') {
-                this.managers.invoices = new InvoiceManager();
-                console.log('✅ InvoiceManager initialisé');
+            if (typeof window.invoiceManager !== 'undefined') {
+                this.managers.invoices = window.invoiceManager;
+                console.log('✅ InvoiceManager initialisé (instance existante)');
             }
             
             // Gestionnaire des devis
-            if (typeof QuoteManager !== 'undefined') {
-                this.managers.quotes = new QuoteManager();
-                console.log('✅ QuoteManager initialisé');
+            if (typeof window.quoteManager !== 'undefined') {
+                this.managers.quotes = window.quoteManager;
+                console.log('✅ QuoteManager initialisé (instance existante)');
             }
             
             // Gestionnaire des dépenses
-            if (typeof ExpenseManager !== 'undefined') {
-                this.managers.expenses = new ExpenseManager();
-                console.log('✅ ExpenseManager initialisé');
+            if (typeof window.expenseManager !== 'undefined') {
+                this.managers.expenses = window.expenseManager;
+                console.log('✅ ExpenseManager initialisé (instance existante)');
+            }
+            
+            // Gestionnaire des paramètres
+            if (typeof window.settingsManager !== 'undefined') {
+                this.managers.settings = window.settingsManager;
+                console.log('✅ SettingsManager initialisé (instance existante)');
             }
             
         } catch (error) {
@@ -522,8 +528,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         console.log('✅ SamaFacture initialisé avec succès');
         
+        // Masquer le loader et afficher l'interface
+        if (typeof window.hideLoader === 'function') {
+            window.hideLoader();
+        }
+        
     } catch (error) {
         console.error('❌ Erreur lors de l\'initialisation:', error);
+        // En cas d'erreur, afficher quand même l'interface avec un message d'erreur
+        if (typeof window.hideLoader === 'function') {
+            window.hideLoader();
+        }
     }
 });
 

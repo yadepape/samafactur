@@ -494,6 +494,10 @@ class LicenseManager {
 // Initialiser le gestionnaire de licence
 const licenseManager = new LicenseManager();
 
+// Export global
+window.LicenseManager = LicenseManager;
+window.licenseManager = licenseManager;
+
 // Commandes console pour les développeurs
 window.generateLicense = () => licenseManager.generateNewLicense();
 window.checkLicense = () => console.log(licenseManager.getLicenseInfo());
