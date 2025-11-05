@@ -91,7 +91,16 @@ class SamaFactureApp {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const module = link.getAttribute('data-module');
+                console.log(`🔗 Navigation vers: ${module}`);
                 this.loadModule(module);
+                
+                // Fermer le menu mobile si ouvert
+                if (window.innerWidth <= 768) {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar) {
+                        sidebar.classList.remove('mobile-open');
+                    }
+                }
             });
         });
 
@@ -394,8 +403,13 @@ class SamaFactureApp {
     closeAllModals() {
         const modals = document.querySelectorAll('.modal-overlay');
         modals.forEach(modal => {
-            modal.style.display = 'none';
-            modal.innerHTML = '';
+            modal.classList.remove('active');
+            // Attendre la fin de l'animation avant de supprimer
+            setTimeout(() => {
+                if (modal.parentNode) {
+                    modal.parentNode.removeChild(modal);
+                }
+            }, 300);
         });
     }
 
@@ -454,32 +468,98 @@ let invoiceManager;
 let quoteManager;
 let expenseManager;
 
+// Fonction pour attendre que tous les scripts soient chargés
+function waitForScripts() {
+    return new Promise((resolve) => {
+        const checkScripts = () => {
+            const scriptsLoaded = [
+                'ClientManager',
+                'ProductManager', 
+                'InvoiceManager',
+                'QuoteManager',
+                'ExpenseManager',
+                'SettingsManager',
+                'DatabaseManager',
+                'LicenseManager'
+            ].every(className => typeof window[className] !== 'undefined');
+            
+            if (scriptsLoaded) {
+                console.log('✅ Tous les scripts sont chargés');
+                resolve();
+            } else {
+                console.log('⏳ Attente du chargement des scripts...');
+                setTimeout(checkScripts, 100);
+            }
+        };
+        checkScripts();
+    });
+}
+
 // Initialisation de l'application
-document.addEventListener('DOMContentLoaded', () => {
-    // Charger le thème sauvegardé
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    
-    // Initialiser l'application
-    app = new SamaFactureApp();
-    
-    // Exposer les gestionnaires globalement pour compatibilité
-    if (app.managers.clients) {
-        clientManager = app.managers.clients;
-    }
-    if (app.managers.products) {
-        productManager = app.managers.products;
-    }
-    if (app.managers.invoices) {
-        invoiceManager = app.managers.invoices;
-    }
-    if (app.managers.quotes) {
-        quoteManager = app.managers.quotes;
-    }
-    if (app.managers.expenses) {
-        expenseManager = app.managers.expenses;
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        console.log('🚀 Initialisation de SamaFacture...');
+        
+        // Charger le thème sauvegardé
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        
+        // Attendre que tous les scripts soient chargés
+        await waitForScripts();
+        
+        // Initialiser l'application
+        app = new SamaFactureApp();
+        
+        // Exposer l'application globalement
+        window.app = app;
+        
+        // Exposer les gestionnaires globalement pour compatibilité
+        setTimeout(() => {
+            if (app.managers.clients) {
+                clientManager = app.managers.clients;
+                window.clientManager = app.managers.clients;
+            }
+            if (app.managers.products) {
+                productManager = app.managers.products;
+                window.productManager = app.managers.products;
+            }
+            if (app.managers.invoices) {
+                invoiceManager = app.managers.invoices;
+                window.invoiceManager = app.managers.invoices;
+            }
+            if (app.managers.quotes) {
+                quoteManager = app.managers.quotes;
+                window.quoteManager = app.managers.quotes;
+            }
+            if (app.managers.expenses) {
+                expenseManager = app.managers.expenses;
+                window.expenseManager = app.managers.expenses;
+            }
+            if (app.managers.settings) {
+                window.settingsManager = app.managers.settings;
+            }
+            
+            console.log('✅ Gestionnaires exposés globalement');
+        }, 500);
+        
+        console.log('✅ SamaFacture initialisé avec succès');
+        
+    } catch (error) {
+        console.error('❌ Erreur lors de l\'initialisation:', error);
     }
 });
+
+// Fonction globale pour la compatibilité
+function showPage(pageName) {
+    if (window.app) {
+        window.app.loadModule(pageName);
+    } else {
+        console.error('❌ Application non initialisée');
+    }
+}
+
+// Exposer la fonction globalement
+window.showPage = showPage;
 
 // Gestion des erreurs globales
 window.addEventListener('error', (event) => {
