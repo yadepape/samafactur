@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Simple - SamaFacture</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test { margin: 10px 0; padding: 10px; border: 1px solid #ddd; }
+        .success { background: #d4edda; }
+        .error { background: #f8d7da; }
+    </style>
+</head>
+<body>
+    <h1>Test Simple des Gestionnaires</h1>
+    <div id="results"></div>
+
+    <!-- Scripts -->
+    <script src="js/license/crypto.js"></script>
+    <script src="js/license/LicenseManager.js"></script>
+    <script src="js/database/DatabaseManager.js"></script>
+    <script src="js/modules/ClientManager.js"></script>
+    <script src="js/modules/ProductManager.js"></script>
+    <script src="js/modules/InvoiceManager.js"></script>
+    <script src="js/modules/QuoteManager.js"></script>
+    <script src="js/modules/ExpenseManager.js"></script>
+    <script src="js/modules/SettingsManager.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        function testManager(name, globalVar) {
+            const exists = typeof window[globalVar] !== 'undefined';
+            const hasRender = exists && typeof window[globalVar].render === 'function';
+            
+            return {
+                name,
+                exists,
+                hasRender,
+                status: exists && hasRender ? 'success' : 'error'
+            };
+        }
+
+        function runTests() {
+            const managers = [
+                { name: 'ClientManager', globalVar: 'clientManager' },
+                { name: 'ProductManager', globalVar: 'productManager' },
+                { name: 'InvoiceManager', globalVar: 'invoiceManager' },
+                { name: 'QuoteManager', globalVar: 'quoteManager' },
+                { name: 'ExpenseManager', globalVar: 'expenseManager' },
+                { name: 'SettingsManager', globalVar: 'settingsManager' }
+            ];
+
+            let html = '';
+            let allSuccess = true;
+
+            managers.forEach(manager => {
+                const result = testManager(manager.name, manager.globalVar);
+                const statusText = result.exists ? 
+                    (result.hasRender ? '✅ OK' : '⚠️ Pas de render()') : 
+                    '❌ Non trouvé';
+                
+                html += `<div class="test ${result.status}">
+                    <strong>${result.name}</strong>: ${statusText}
+                </div>`;
+
+                if (result.status !== 'success') allSuccess = false;
+            });
+
+            // Test de l'application
+            try {
+                const app = new Application();
+                html += `<div class="test success">
+                    <strong>Application</strong>: ✅ Peut être instanciée
+                </div>`;
+            } catch (error) {
+                html += `<div class="test error">
+                    <strong>Application</strong>: ❌ Erreur: ${error.message}
+                </div>`;
+                allSuccess = false;
+            }
+
+            html += `<div class="test ${allSuccess ? 'success' : 'error'}">
+                <strong>Résultat Global</strong>: ${allSuccess ? '✅ Tous les gestionnaires sont accessibles' : '❌ Certains gestionnaires ont des problèmes'}
+            </div>`;
+
+            document.getElementById('results').innerHTML = html;
+        }
+
+        // Attendre que tous les scripts soient chargés
+        setTimeout(runTests, 1000);
+    </script>
+</body>
+</html>
+

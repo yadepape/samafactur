@@ -108,6 +108,13 @@ class SettingsManager {
     }
 
     /**
+     * Méthode render() pour compatibilité avec l'architecture de l'application
+     */
+    render() {
+        this.showSettingsPage();
+    }
+
+    /**
      * Afficher la page des paramètres
      */
     showSettingsPage() {

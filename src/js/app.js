@@ -381,9 +381,12 @@ class SamaFactureApp {
      * Charger la gestion des devis
      */
     loadQuotes() {
+        console.log('📋 Chargement des devis...');
         if (this.managers.quotes) {
             this.managers.quotes.render();
+            this.updatePageTitle('Devis');
         } else {
+            console.error('❌ Gestionnaire de devis non disponible');
             this.showError('Le gestionnaire de devis n\'est pas disponible');
         }
     }
@@ -392,9 +395,12 @@ class SamaFactureApp {
      * Charger la gestion des dépenses
      */
     loadExpenses() {
+        console.log('💰 Chargement des dépenses...');
         if (this.managers.expenses) {
             this.managers.expenses.render();
+            this.updatePageTitle('Dépenses');
         } else {
+            console.error('❌ Gestionnaire de dépenses non disponible');
             this.showError('Le gestionnaire de dépenses n\'est pas disponible');
         }
     }
@@ -403,9 +409,12 @@ class SamaFactureApp {
      * Charger les paramètres
      */
     loadSettings() {
-        if (typeof settingsManager !== 'undefined' && settingsManager) {
-            settingsManager.showSettingsPage();
+        console.log('⚙️ Chargement des paramètres...');
+        if (this.managers.settings) {
+            this.managers.settings.render();
+            this.updatePageTitle('Paramètres');
         } else {
+            console.error('❌ Gestionnaire de paramètres non disponible');
             this.showError('Le gestionnaire de paramètres n\'est pas disponible');
         }
     }
