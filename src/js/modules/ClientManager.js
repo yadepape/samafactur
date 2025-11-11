@@ -637,37 +637,162 @@ class ClientManager {
     console.log('ClientManager: setupEventListeners appelé');
   }
 
-  // Méthodes d'actions (stubs pour éviter les erreurs)
+  // Méthodes d'actions CRUD complètes
   async showAddClientModal() {
     console.log('showAddClientModal appelé');
+    const modalHTML = this.generateAddClientModal();
+    document.getElementById('modal-overlay').innerHTML = modalHTML;
+    document.getElementById('modal-overlay').style.display = 'flex';
   }
 
   async editClient(id) {
     console.log('editClient appelé avec id:', id);
+    const client = this.clients.find(c => c.id == id);
+    if (!client) {
+      this.showToast('Client non trouvé', 'error');
+      return;
+    }
+    const modalHTML = this.generateEditClientModal(client);
+    document.getElementById('modal-overlay').innerHTML = modalHTML;
+    document.getElementById('modal-overlay').style.display = 'flex';
   }
 
   async viewClient(id) {
     console.log('viewClient appelé avec id:', id);
+    const client = this.clients.find(c => c.id == id);
+    if (!client) {
+      this.showToast('Client non trouvé', 'error');
+      return;
+    }
+    const modalHTML = this.generateViewClientModal(client);
+    document.getElementById('modal-overlay').innerHTML = modalHTML;
+    document.getElementById('modal-overlay').style.display = 'flex';
   }
 
   async confirmDeleteClient(id) {
     console.log('confirmDeleteClient appelé avec id:', id);
+    const client = this.clients.find(c => c.id == id);
+    if (!client) {
+      this.showToast('Client non trouvé', 'error');
+      return;
+    }
+    const modalHTML = this.generateDeleteClientModal(client);
+    document.getElementById('modal-overlay').innerHTML = modalHTML;
+    document.getElementById('modal-overlay').style.display = 'flex';
+  }
+
+  async deleteClient(id) {
+    console.log('deleteClient appelé avec id:', id);
+    const index = this.clients.findIndex(c => c.id == id);
+    if (index !== -1) {
+      this.clients.splice(index, 1);
+      this.saveClients();
+      this.render();
+      this.closeModal();
+      this.showToast('Client supprimé avec succès', 'success');
+    }
   }
 
   async toggleClientStatus(id) {
     console.log('toggleClientStatus appelé avec id:', id);
+    const client = this.clients.find(c => c.id == id);
+    if (client) {
+      client.status = client.status === 'active' ? 'inactive' : 'active';
+      this.saveClients();
+      this.render();
+      this.showToast(`Client ${client.status === 'active' ? 'activé' : 'désactivé'}`, 'success');
+    }
   }
 
   async duplicateClient(id) {
     console.log('duplicateClient appelé avec id:', id);
+    const client = this.clients.find(c => c.id == id);
+    if (client) {
+      const newClient = {
+        ...client,
+        id: Date.now(),
+        name: client.name + ' (Copie)',
+        email: '',
+        createdAt: new Date().toISOString()
+      };
+      this.clients.push(newClient);
+      this.saveClients();
+      this.render();
+      this.showToast('Client dupliqué avec succès', 'success');
+    }
   }
 
   async exportClient(id) {
     console.log('exportClient appelé avec id:', id);
+    const client = this.clients.find(c => c.id == id);
+    if (client) {
+      const dataStr = JSON.stringify(client, null, 2);
+      const dataBlob = new Blob([dataStr], {type: 'application/json'});
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `client_${client.name.replace(/\s+/g, '_')}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      this.showToast('Client exporté avec succès', 'success');
+    }
+  }
+
+  async saveClient(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const clientData = {
+      name: formData.get('name').trim(),
+      email: formData.get('email').trim(),
+      phone: formData.get('phone').trim(),
+      address: formData.get('address').trim(),
+      city: formData.get('city').trim(),
+      postalCode: formData.get('postalCode').trim(),
+      country: formData.get('country').trim(),
+      company: formData.get('company').trim(),
+      notes: formData.get('notes').trim(),
+      status: formData.get('status') || 'active'
+    };
+
+    // Validation
+    if (!clientData.name) {
+      this.showToast('Le nom du client est requis', 'error');
+      return;
+    }
+
+    const clientId = formData.get('clientId');
+    if (clientId) {
+      // Modification
+      const client = this.clients.find(c => c.id == clientId);
+      if (client) {
+        Object.assign(client, clientData);
+        client.updatedAt = new Date().toISOString();
+        this.showToast('Client modifié avec succès', 'success');
+      }
+    } else {
+      // Création
+      const newClient = {
+        id: Date.now(),
+        ...clientData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      this.clients.push(newClient);
+      this.showToast('Client créé avec succès', 'success');
+    }
+
+    this.saveClients();
+    this.render();
+    this.closeModal();
   }
 
   closeModal() {
     console.log('closeModal appelé');
+    const modalOverlay = document.getElementById('modal-overlay');
+    if (modalOverlay) {
+      modalOverlay.style.display = 'none';
+      modalOverlay.innerHTML = '';
+    }
   }
 
   closeDetailsModal() {
@@ -680,6 +805,237 @@ class ClientManager {
 
   editCurrentClient() {
     console.log('editCurrentClient appelé');
+  }
+
+  // Méthodes de génération de modales
+  generateAddClientModal() {
+    return `
+      <div class="modal-backdrop" onclick="clientManager.closeModal()"></div>
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="fas fa-user-plus"></i> Ajouter un Client</h3>
+          <button class="modal-close" onclick="clientManager.closeModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form class="modal-body" onsubmit="clientManager.saveClient(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="name">Nom *</label>
+              <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email">
+            </div>
+            <div class="form-group">
+              <label for="phone">Téléphone</label>
+              <input type="tel" id="phone" name="phone">
+            </div>
+            <div class="form-group">
+              <label for="company">Entreprise</label>
+              <input type="text" id="company" name="company">
+            </div>
+            <div class="form-group full-width">
+              <label for="address">Adresse</label>
+              <input type="text" id="address" name="address">
+            </div>
+            <div class="form-group">
+              <label for="city">Ville</label>
+              <input type="text" id="city" name="city">
+            </div>
+            <div class="form-group">
+              <label for="postalCode">Code Postal</label>
+              <input type="text" id="postalCode" name="postalCode">
+            </div>
+            <div class="form-group">
+              <label for="country">Pays</label>
+              <input type="text" id="country" name="country" value="Sénégal">
+            </div>
+            <div class="form-group">
+              <label for="status">Statut</label>
+              <select id="status" name="status">
+                <option value="active">Actif</option>
+                <option value="inactive">Inactif</option>
+              </select>
+            </div>
+            <div class="form-group full-width">
+              <label for="notes">Notes</label>
+              <textarea id="notes" name="notes" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="clientManager.closeModal()">
+              Annuler
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save"></i> Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+  }
+
+  generateEditClientModal(client) {
+    return `
+      <div class="modal-backdrop" onclick="clientManager.closeModal()"></div>
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="fas fa-user-edit"></i> Modifier le Client</h3>
+          <button class="modal-close" onclick="clientManager.closeModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form class="modal-body" onsubmit="clientManager.saveClient(event)">
+          <input type="hidden" name="clientId" value="${client.id}">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="name">Nom *</label>
+              <input type="text" id="name" name="name" value="${client.name || ''}" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" value="${client.email || ''}">
+            </div>
+            <div class="form-group">
+              <label for="phone">Téléphone</label>
+              <input type="tel" id="phone" name="phone" value="${client.phone || ''}">
+            </div>
+            <div class="form-group">
+              <label for="company">Entreprise</label>
+              <input type="text" id="company" name="company" value="${client.company || ''}">
+            </div>
+            <div class="form-group full-width">
+              <label for="address">Adresse</label>
+              <input type="text" id="address" name="address" value="${client.address || ''}">
+            </div>
+            <div class="form-group">
+              <label for="city">Ville</label>
+              <input type="text" id="city" name="city" value="${client.city || ''}">
+            </div>
+            <div class="form-group">
+              <label for="postalCode">Code Postal</label>
+              <input type="text" id="postalCode" name="postalCode" value="${client.postalCode || ''}">
+            </div>
+            <div class="form-group">
+              <label for="country">Pays</label>
+              <input type="text" id="country" name="country" value="${client.country || 'Sénégal'}">
+            </div>
+            <div class="form-group">
+              <label for="status">Statut</label>
+              <select id="status" name="status">
+                <option value="active" ${client.status === 'active' ? 'selected' : ''}>Actif</option>
+                <option value="inactive" ${client.status === 'inactive' ? 'selected' : ''}>Inactif</option>
+              </select>
+            </div>
+            <div class="form-group full-width">
+              <label for="notes">Notes</label>
+              <textarea id="notes" name="notes" rows="3">${client.notes || ''}</textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="clientManager.closeModal()">
+              Annuler
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save"></i> Modifier
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+  }
+
+  generateViewClientModal(client) {
+    return `
+      <div class="modal-backdrop" onclick="clientManager.closeModal()"></div>
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="fas fa-user"></i> Détails du Client</h3>
+          <button class="modal-close" onclick="clientManager.closeModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="client-details">
+            <div class="detail-row">
+              <strong>Nom:</strong> ${client.name || 'N/A'}
+            </div>
+            <div class="detail-row">
+              <strong>Email:</strong> ${client.email || 'N/A'}
+            </div>
+            <div class="detail-row">
+              <strong>Téléphone:</strong> ${client.phone || 'N/A'}
+            </div>
+            <div class="detail-row">
+              <strong>Entreprise:</strong> ${client.company || 'N/A'}
+            </div>
+            <div class="detail-row">
+              <strong>Adresse:</strong> ${client.address || 'N/A'}
+            </div>
+            <div class="detail-row">
+              <strong>Ville:</strong> ${client.city || 'N/A'}
+            </div>
+            <div class="detail-row">
+              <strong>Code Postal:</strong> ${client.postalCode || 'N/A'}
+            </div>
+            <div class="detail-row">
+              <strong>Pays:</strong> ${client.country || 'N/A'}
+            </div>
+            <div class="detail-row">
+              <strong>Statut:</strong> 
+              <span class="status ${client.status === 'active' ? 'active' : 'inactive'}">
+                ${client.status === 'active' ? 'Actif' : 'Inactif'}
+              </span>
+            </div>
+            <div class="detail-row">
+              <strong>Notes:</strong> ${client.notes || 'Aucune note'}
+            </div>
+            <div class="detail-row">
+              <strong>Créé le:</strong> ${client.createdAt ? new Date(client.createdAt).toLocaleDateString('fr-FR') : 'N/A'}
+            </div>
+            <div class="detail-row">
+              <strong>Modifié le:</strong> ${client.updatedAt ? new Date(client.updatedAt).toLocaleDateString('fr-FR') : 'N/A'}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="clientManager.closeModal()">
+              Fermer
+            </button>
+            <button type="button" class="btn btn-primary" onclick="clientManager.editClient(${client.id})">
+              <i class="fas fa-edit"></i> Modifier
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  generateDeleteClientModal(client) {
+    return `
+      <div class="modal-backdrop" onclick="clientManager.closeModal()"></div>
+      <div class="modal-container modal-small">
+        <div class="modal-header">
+          <h3><i class="fas fa-exclamation-triangle"></i> Confirmer la Suppression</h3>
+          <button class="modal-close" onclick="clientManager.closeModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Êtes-vous sûr de vouloir supprimer le client <strong>"${client.name}"</strong> ?</p>
+          <p class="warning-text">Cette action est irréversible.</p>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="clientManager.closeModal()">
+              Annuler
+            </button>
+            <button type="button" class="btn btn-danger" onclick="clientManager.deleteClient(${client.id})">
+              <i class="fas fa-trash"></i> Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   // Méthodes de navigation
@@ -700,6 +1056,55 @@ class ClientManager {
 
   async reload() {
     await this.refresh();
+  }
+
+  // Méthode d'affichage des notifications
+  showToast(message, type = 'info') {
+    // Créer l'élément toast
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+      <div class="toast-content">
+        <i class="fas ${this.getToastIcon(type)}"></i>
+        <span>${message}</span>
+      </div>
+      <button class="toast-close" onclick="this.parentElement.remove()">
+        <i class="fas fa-times"></i>
+      </button>
+    `;
+
+    // Ajouter au container de toasts
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.id = 'toast-container';
+      toastContainer.className = 'toast-container';
+      document.body.appendChild(toastContainer);
+    }
+
+    toastContainer.appendChild(toast);
+
+    // Auto-suppression après 5 secondes
+    setTimeout(() => {
+      if (toast.parentElement) {
+        toast.remove();
+      }
+    }, 5000);
+
+    // Animation d'entrée
+    setTimeout(() => {
+      toast.classList.add('show');
+    }, 100);
+  }
+
+  getToastIcon(type) {
+    const icons = {
+      'success': 'fa-check-circle',
+      'error': 'fa-exclamation-circle',
+      'warning': 'fa-exclamation-triangle',
+      'info': 'fa-info-circle'
+    };
+    return icons[type] || icons.info;
   }
 }
 
